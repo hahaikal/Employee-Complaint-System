@@ -1,69 +1,154 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Metadata } from "next";
+import {
+  ArrowRight,
+  Building2,
+  CheckCircle2,
+  ClipboardList,
+  ShieldCheck,
+  Timer,
+  Wrench,
+} from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-export default function Home() {
+export const metadata: Metadata = {
+  title: "SIPKA — Layanan Pengaduan Fasilitas Karyawan",
+  description: "Sampaikan kendala fasilitas dan sarana kantor Anda dengan mudah, cepat, dan transparan melalui SIPKA.",
+};
+
+const steps = [
+  {
+    icon: ClipboardList,
+    title: "Lapor",
+    desc: "Isi formulir pengaduan beserta foto kondisi fasilitas.",
+  },
+  {
+    icon: Wrench,
+    title: "Diproses GA",
+    desc: "Tim General Affairs memverifikasi dan menindaklanjuti laporan.",
+  },
+  {
+    icon: CheckCircle2,
+    title: "Selesai",
+    desc: "Perbaikan rampung dan Anda menerima pemberitahuan status.",
+  },
+];
+
+export default function Index() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen bg-background">
+      <header className="border-b border-border bg-surface/80 backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+          <div className="flex items-center gap-2.5">
+            <span className="flex size-9 items-center justify-center rounded-xl bg-brand text-brand-foreground">
+              <Building2 className="size-5" />
+            </span>
+            <span className="text-base font-semibold text-heading">SIPKA</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link href="/login" className={cn(buttonVariants({ variant: "ghost" }), "text-body")}>
+              Masuk
+            </Link>
+            <Link href="/register" className={cn(buttonVariants(), "bg-brand text-brand-foreground hover:bg-brand-dark")}>
+              Buat Akun
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+      </header>
+
+      <main>
+        <section className="mx-auto max-w-6xl px-4 pt-16 pb-12 sm:px-6 sm:pt-24">
+          <div className="mx-auto max-w-3xl text-center">
+            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-body shadow-soft">
+              <ShieldCheck className="size-3.5 text-brand" />
+              Layanan internal Divisi General Affairs
+            </span>
+            <h1 className="mt-6 text-4xl font-bold tracking-tight text-heading sm:text-5xl lg:text-6xl">
+              Layanan Pengaduan Fasilitas Karyawan
+            </h1>
+            <p className="mx-auto mt-5 max-w-2xl text-lg text-body">
+              Sampaikan kendala fasilitas dan sarana kantor Anda dengan mudah, cepat,
+              dan transparan.
+            </p>
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Link
+                href="/login"
+                className={cn(buttonVariants({ size: "lg" }), "w-full bg-brand px-8 text-brand-foreground shadow-soft hover:bg-brand-dark sm:w-auto")}
+              >
+                Masuk
+                <ArrowRight className="size-4" />
+              </Link>
+              <Link
+                href="/register"
+                className={cn(buttonVariants({ size: "lg", variant: "outline" }), "w-full border-border bg-surface px-8 text-heading sm:w-auto")}
+              >
+                Buat Akun
+              </Link>
+            </div>
+          </div>
+
+          <div className="mx-auto mt-14 grid max-w-4xl gap-4 sm:grid-cols-3">
+            {[
+              { icon: Timer, label: "Respons cepat", value: "< 1x24 jam" },
+              { icon: ClipboardList, label: "Pengaduan tertangani", value: "1.240+" },
+              { icon: CheckCircle2, label: "Tingkat penyelesaian", value: "96%" },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="rounded-2xl border border-border bg-surface p-5 text-left shadow-soft"
+              >
+                <item.icon className="size-5 text-brand" />
+                <p className="mt-3 text-2xl font-semibold text-heading">{item.value}</p>
+                <p className="text-sm text-body">{item.label}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
+          <div className="rounded-3xl border border-border bg-surface p-8 shadow-soft sm:p-12">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-heading sm:text-3xl">
+                Tiga langkah sederhana
+              </h2>
+              <p className="mt-2 text-body">
+                Alur pengaduan yang jelas dari awal hingga selesai.
+              </p>
+            </div>
+
+            <ol className="mt-10 grid gap-6 lg:grid-cols-3">
+              {steps.map((step, i) => (
+                <li key={step.title} className="relative">
+                  <div className="h-full rounded-2xl border border-border bg-background p-6">
+                    <div className="flex items-center gap-3">
+                      <span className="flex size-11 items-center justify-center rounded-xl bg-brand text-brand-foreground">
+                        <step.icon className="size-5" />
+                      </span>
+                      <span className="text-sm font-semibold tracking-wide text-body uppercase">
+                        Langkah {i + 1}
+                      </span>
+                    </div>
+                    <h3 className="mt-4 text-lg font-semibold text-heading">
+                      {step.title}
+                    </h3>
+                    <p className="mt-1.5 text-sm text-body">{step.desc}</p>
+                  </div>
+                  {i < steps.length - 1 && (
+                    <ArrowRight className="absolute top-1/2 -right-4 hidden size-5 -translate-y-1/2 text-border lg:block" />
+                  )}
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
       </main>
+
+      <footer className="border-t border-border bg-surface">
+        <div className="mx-auto max-w-6xl px-4 py-8 text-sm text-body sm:px-6">
+          © 2026 SIPKA — Sistem Informasi Pengaduan Karyawan.
+        </div>
+      </footer>
     </div>
   );
 }

@@ -4,9 +4,10 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { AuthLayout } from '@/components/auth-layout';
 import { createClient } from '@/utils/supabase/client';
 import { toast } from 'sonner';
 
@@ -39,7 +40,6 @@ export default function LoginPage() {
     }
 
     if (data.user) {
-      // Fetch role to redirect appropriately
       const { data: userData, error: userError } = await supabase
         .from('users')
         .select('role')
@@ -63,51 +63,62 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4 bg-muted/50">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Login</CardTitle>
-          <CardDescription className="text-center">
-            Sistem Informasi Pengaduan Karyawan
+    <AuthLayout quote="Kenyamanan tempat kerja adalah fondasi dari produktivitas yang berkelanjutan.">
+      <Card className="rounded-2xl border-border shadow-lift">
+        <CardHeader className="space-y-1.5">
+          <CardTitle className="text-2xl text-heading">Masuk</CardTitle>
+          <CardDescription className="text-body">
+            Gunakan akun karyawan Anda untuk melanjutkan.
           </CardDescription>
         </CardHeader>
-        <form onSubmit={handleLogin}>
-          <CardContent className="space-y-4">
+        <CardContent>
+          <form className="space-y-4" onSubmit={handleLogin}>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
+              <Label htmlFor="email" className="text-heading">
+                Email
+              </Label>
+              <Input 
+                id="email" 
+                type="email" 
+                placeholder="nama@perusahaan.co.id" 
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password" className="text-heading">
+                  Kata Sandi
+                </Label>
+                <span className="text-xs text-brand cursor-pointer hover:underline">Lupa kata sandi?</span>
+              </div>
+              <Input 
+                id="password" 
+                type="password" 
+                placeholder="••••••••" 
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-          </CardContent>
-          <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-brand text-brand-foreground hover:bg-brand-dark"
+            >
               {loading ? 'Memproses...' : 'Masuk'}
             </Button>
-            <div className="text-sm text-center text-muted-foreground">
-              Belum punya akun?{' '}
-              <Link href="/register" className="text-primary hover:underline">
-                Daftar di sini
-              </Link>
-            </div>
-          </CardFooter>
-        </form>
+          </form>
+
+          <p className="mt-6 text-center text-sm text-body">
+            Belum punya akun?{" "}
+            <Link href="/register" className="font-semibold text-brand hover:underline">
+              Buat Akun
+            </Link>
+          </p>
+        </CardContent>
       </Card>
-    </div>
+    </AuthLayout>
   );
 }
