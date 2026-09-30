@@ -1,5 +1,3 @@
--- Migration script to sync database schema with the new ERD
-
 -- 1. Update Table: users
 ALTER TABLE public.users RENAME COLUMN nama_lengkap TO nama;
 ALTER TABLE public.users RENAME COLUMN no_wa TO no_hp;

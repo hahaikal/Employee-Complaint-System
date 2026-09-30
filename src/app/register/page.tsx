@@ -16,9 +16,10 @@ export default function RegisterPage() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    nama_lengkap: '',
+    nama: '',
+    username: '',
     nik: '',
-    no_wa: '',
+    no_hp: '',
   });
   const [loading, setLoading] = useState(false);
 
@@ -38,16 +39,32 @@ export default function RegisterPage() {
       password: formData.password,
       options: {
         data: {
-          nama_lengkap: formData.nama_lengkap,
+          nama: formData.nama,
+          username: formData.username,
           nik: formData.nik,
-          no_wa: formData.no_wa,
-          role: 'karyawan', // Default role
+          no_hp: formData.no_hp,
+          role: 'Karyawan',
         },
       },
     });
 
     if (error) {
-      toast.error(error.message);
+      let errorMessage = error.message;
+      
+      const lowerError = errorMessage.toLowerCase();
+      if (lowerError.includes('user already registered')) {
+        errorMessage = 'Email ini sudah terdaftar. Silakan gunakan email lain atau langsung login.';
+      } else if (lowerError.includes('password should be at least')) {
+        errorMessage = 'Password minimal harus terdiri dari 6 karakter.';
+      } else if (lowerError.includes('rate limit') || errorMessage.includes('429') || lowerError.includes('too many requests')) {
+        errorMessage = 'Terlalu banyak percobaan pendaftaran. Silakan tunggu beberapa saat lagi.';
+      } else if (lowerError.includes('duplicate key value') || lowerError.includes('unique constraint')) {
+        errorMessage = 'Data NIK atau Username ini sudah digunakan oleh akun lain.';
+      } else if (lowerError.includes('database error')) {
+        errorMessage = 'Terjadi kesalahan sistem saat menyimpan data (Pastikan Trigger di Supabase sudah benar).';
+      }
+
+      toast.error(errorMessage);
       setLoading(false);
       return;
     }
@@ -72,11 +89,20 @@ export default function RegisterPage() {
         <form onSubmit={handleRegister}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="nama_lengkap">Nama Lengkap</Label>
+              <Label htmlFor="nama">Nama Lengkap</Label>
               <Input
-                id="nama_lengkap"
+                id="nama"
                 required
-                value={formData.nama_lengkap}
+                value={formData.nama}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="username">Username</Label>
+              <Input
+                id="username"
+                required
+                value={formData.username}
                 onChange={handleChange}
               />
             </div>
@@ -90,12 +116,12 @@ export default function RegisterPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="no_wa">Nomor WhatsApp</Label>
+              <Label htmlFor="no_hp">Nomor WhatsApp / HP</Label>
               <Input
-                id="no_wa"
+                id="no_hp"
                 type="tel"
                 required
-                value={formData.no_wa}
+                value={formData.no_hp}
                 onChange={handleChange}
               />
             </div>

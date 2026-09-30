@@ -27,7 +27,13 @@ export default function LoginPage() {
     });
 
     if (error) {
-      toast.error(error.message);
+      let errorMessage = error.message;
+      if (errorMessage.toLowerCase().includes('invalid login credentials')) {
+        errorMessage = 'Email atau password salah.';
+      } else if (errorMessage.toLowerCase().includes('email not confirmed')) {
+        errorMessage = 'Email belum diverifikasi. Silakan cek kotak masuk email Anda.';
+      }
+      toast.error(errorMessage);
       setLoading(false);
       return;
     }
