@@ -1,5 +1,9 @@
+"use client";
+
 import { Building2, FileText, History, LayoutDashboard, LogOut, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 
 const navItems = [
   { label: "Profil", icon: User },
@@ -9,6 +13,15 @@ const navItems = [
 ];
 
 export function AppSidebar({ onNavigate }: { onNavigate?: () => void }) {
+  const router = useRouter();
+  const supabase = createClient();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/login");
+    router.refresh();
+  };
+
   return (
     <div className="flex h-full w-64 flex-col bg-sidebar-brand text-white">
       <div className="flex items-center gap-3 px-6 pb-6 pt-7">
@@ -54,7 +67,7 @@ export function AppSidebar({ onNavigate }: { onNavigate?: () => void }) {
       <div className="mt-auto pb-6">
         <button
           type="button"
-          onClick={onNavigate}
+          onClick={handleLogout}
           className="mx-4 flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
         >
           <LogOut className="h-[18px] w-[18px]" />

@@ -1,3 +1,5 @@
+"use client";
+
 import { Bell, LogOut, Menu, Search } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -8,15 +10,25 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { currentUser } from "./data";
 import { AppSidebar } from "./app-sidebar";
+import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 
 const roleLabels: Record<string, string> = {
   KARYAWAN: "Karyawan",
   ADMIN: "Admin GA",
 };
 
-export function AppHeader({ role }: { role: string }) {
+export function AppHeader({ role, currentUser }: { role: string, currentUser: any }) {
+  const router = useRouter();
+  const supabase = createClient();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/login");
+    router.refresh();
+  };
+
   return (
     <header className="sticky top-0 z-20 border-b border-slate-200/80 bg-white/90 backdrop-blur">
       <div className="flex h-16 items-center gap-2 px-4 sm:gap-3 sm:px-6 lg:px-8">
@@ -64,7 +76,7 @@ export function AppHeader({ role }: { role: string }) {
             <Avatar className="h-9 w-9 border border-slate-200">
               <AvatarImage src={"https://github.com/shadcn.png"} alt={currentUser.name} />
               <AvatarFallback className="bg-sidebar-brand text-xs font-semibold text-white">
-                BS
+                {currentUser.name.substring(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <div className="hidden text-left sm:block">
@@ -78,6 +90,7 @@ export function AppHeader({ role }: { role: string }) {
           <Button
             variant="ghost"
             size="icon"
+            onClick={handleLogout}
             className="hidden text-slate-500 hover:text-slate-900 sm:inline-flex"
             aria-label="Keluar"
           >

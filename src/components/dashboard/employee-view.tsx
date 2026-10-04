@@ -1,5 +1,5 @@
 import { CalendarDays, ChevronRight, Inbox, IdCard, Mail, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,19 +9,20 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { currentUser, employeeComplaints, type Complaint } from "./data";
+import { employeeComplaints, type Complaint } from "./data";
 import { StatusBadge, statusConfig } from "./status-badge";
+import Link from "next/link";
 
-export function EmployeeView() {
+export function EmployeeView({ currentUser }: { currentUser: any }) {
   return (
     <div className="flex flex-col gap-6">
-      <ProfileSummary />
+      <ProfileSummary currentUser={currentUser} />
       <ComplaintTracking complaints={employeeComplaints} />
     </div>
   );
 }
 
-function ProfileSummary() {
+function ProfileSummary({ currentUser }: { currentUser: any }) {
   return (
     <Card className="rounded-2xl border-slate-200/80 shadow-sm">
       <CardContent className="flex flex-col gap-6 p-6 lg:flex-row lg:items-center">
@@ -29,7 +30,7 @@ function ProfileSummary() {
           <Avatar className="h-20 w-20 shrink-0 border-4 border-white shadow-md ring-2 ring-sidebar-brand/10">
             <AvatarImage src={"https://github.com/shadcn.png"} alt={currentUser.name} />
             <AvatarFallback className="bg-sidebar-brand text-lg font-semibold text-white">
-              BS
+              {currentUser.name.substring(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0">
@@ -58,13 +59,13 @@ function ProfileSummary() {
           </div>
         </div>
 
-        <Button
-          size="lg"
-          className="w-fit shrink-0 rounded-full bg-sidebar-brand px-6 font-semibold text-white shadow-lg shadow-sidebar-brand/25 hover:bg-sidebar-brand-hover"
+        <Link 
+          href="/dashboard/pengaduan/create"
+          className={cn(buttonVariants({ size: "lg" }), "w-fit shrink-0 rounded-full bg-sidebar-brand px-6 font-semibold text-white shadow-lg shadow-sidebar-brand/25 hover:bg-sidebar-brand-hover")}
         >
           <Plus className="h-4 w-4" />
           Ajukan Pengaduan
-        </Button>
+        </Link>
       </CardContent>
     </Card>
   );
@@ -148,10 +149,13 @@ function EmptyState() {
         Semua kendala fasilitas di tempat kerja bisa Anda laporkan di sini.
         Mulai dengan membuat pengajuan pertama Anda.
       </p>
-      <Button className="mt-6 rounded-full bg-sidebar-brand px-6 font-semibold text-white shadow-lg shadow-sidebar-brand/25 hover:bg-sidebar-brand-hover">
+      <Link 
+        href="/dashboard/pengaduan/create" 
+        className={cn(buttonVariants(), "mt-6 rounded-full bg-sidebar-brand px-6 font-semibold text-white shadow-lg shadow-sidebar-brand/25 hover:bg-sidebar-brand-hover")}
+      >
         <Plus className="h-4 w-4" />
         Buat Pengajuan Baru
-      </Button>
+      </Link>
     </div>
   );
 }

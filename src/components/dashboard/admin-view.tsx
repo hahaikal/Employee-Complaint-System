@@ -36,7 +36,7 @@ const columns: {
   },
 ];
 
-export function AdminView() {
+export function AdminView({ currentUser }: { currentUser?: any }) {
   const stats = [
     {
       label: "Total Diajukan",
