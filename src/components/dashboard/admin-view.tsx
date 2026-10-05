@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { adminComplaints, type Complaint, type ComplaintStatus } from "./data";
+import type { Complaint, ComplaintStatus } from "./data";
 import { StatusBadge } from "./status-badge";
 
 const columns: {
@@ -25,6 +25,11 @@ const columns: {
     action: { label: "Verifikasi", icon: Check },
   },
   {
+    status: "DIVERIFIKASI",
+    title: "Diverifikasi",
+    action: { label: "Tentukan Penanganan", icon: Check },
+  },
+  {
     status: "DIPROSES",
     title: "Sedang Diproses",
     action: { label: "Update Status", icon: RefreshCw },
@@ -36,23 +41,23 @@ const columns: {
   },
 ];
 
-export function AdminView({ currentUser }: { currentUser?: any }) {
+export function AdminView({ currentUser, complaints }: { currentUser?: any, complaints: Complaint[] }) {
   const stats = [
     {
       label: "Total Diajukan",
-      value: adminComplaints.filter((c) => c.status === "DIAJUKAN").length,
+      value: complaints.filter((c) => c.status === "DIAJUKAN").length,
       icon: Inbox,
       accent: "bg-status-diajukan-bg text-status-diajukan",
     },
     {
       label: "Total Diproses",
-      value: adminComplaints.filter((c) => c.status === "DIPROSES").length,
+      value: complaints.filter((c) => c.status === "DIPROSES").length,
       icon: LoaderCircle,
       accent: "bg-status-diproses-bg text-status-diproses",
     },
     {
       label: "Total Selesai",
-      value: adminComplaints.filter((c) => c.status === "SELESAI").length,
+      value: complaints.filter((c) => c.status === "SELESAI").length,
       icon: CheckCircle2,
       accent: "bg-status-selesai-bg text-status-selesai",
     },
@@ -88,9 +93,9 @@ export function AdminView({ currentUser }: { currentUser?: any }) {
         ))}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-4">
         {columns.map((col) => {
-          const cards = adminComplaints.filter((c) => c.status === col.status);
+          const cards = complaints.filter((c) => c.status === col.status);
 
           return (
             <div

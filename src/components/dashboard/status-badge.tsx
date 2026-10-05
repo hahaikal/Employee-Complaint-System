@@ -11,6 +11,11 @@ export const statusConfig: Record<
     badgeClass: "bg-status-diajukan-bg text-status-diajukan",
     dotClass: "bg-status-diajukan",
   },
+  DIVERIFIKASI: {
+    label: "Diverifikasi",
+    badgeClass: "bg-blue-100 text-blue-700",
+    dotClass: "bg-blue-500",
+  },
   DIPROSES: {
     label: "Diproses",
     badgeClass: "bg-status-diproses-bg text-status-diproses",

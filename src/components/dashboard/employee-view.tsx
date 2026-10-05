@@ -9,15 +9,15 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { employeeComplaints, type Complaint } from "./data";
+import type { Complaint } from "./data";
 import { StatusBadge, statusConfig } from "./status-badge";
 import Link from "next/link";
 
-export function EmployeeView({ currentUser }: { currentUser: any }) {
+export function EmployeeView({ currentUser, complaints }: { currentUser: any, complaints: Complaint[] }) {
   return (
     <div className="flex flex-col gap-6">
       <ProfileSummary currentUser={currentUser} />
-      <ComplaintTracking complaints={employeeComplaints} />
+      <ComplaintTracking complaints={complaints} />
     </div>
   );
 }
@@ -121,7 +121,7 @@ function Timeline({ items }: { items: Complaint[] }) {
                 </p>
                 <p className="mt-1.5 flex items-center gap-1.5 text-xs text-slate-400">
                   <CalendarDays className="h-3.5 w-3.5" />
-                  {item.date} · {item.id}
+                  {item.date} · {item.nomor_pengaduan}
                 </p>
               </div>
               <StatusBadge

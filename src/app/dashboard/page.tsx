@@ -29,12 +29,42 @@ export default async function DashboardPage() {
 
   // Map the profile to the expected format
   const currentUser = {
-    name: profile?.nama_lengkap || user.user_metadata?.nama || "Pengguna",
+    name: profile?.nama || user.user_metadata?.nama || "Pengguna",
     nik: profile?.nik || user.user_metadata?.nik || "-",
     position: "Karyawan", // Dummy
     department: "Divisi", // Dummy
     email: user.email || "-",
   };
+
+  const { data: rawComplaints, error: complaintsError } = await supabase
+    .from("pengaduan")
+    .select(`
+      id,
+      nomor_pengaduan,
+      judul,
+      detail_pengaduan,
+      status,
+      tanggal_pengaduan,
+      kategori_pengaduan (nama_kategori),
+      users (nama)
+    `)
+    .order("created_at", { ascending: false });
+
+  if (complaintsError) {
+    console.error("Error fetching complaints:", complaintsError);
+  }
+
+  const mappedComplaints = (rawComplaints || []).map((c: any) => ({
+    id: c.id,
+    nomor_pengaduan: c.nomor_pengaduan,
+    title: c.judul,
+    category: c.kategori_pengaduan?.nama_kategori || "Umum",
+    description: c.detail_pengaduan,
+    date: c.tanggal_pengaduan ? new Date(c.tanggal_pengaduan).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : "-",
+    status: c.status,
+    employee: c.users?.nama || "Unknown",
+    department: "Divisi",
+  }));
 
   return (
     <div className="flex min-h-screen bg-slate-50">
@@ -45,7 +75,11 @@ export default async function DashboardPage() {
       <div className="flex min-w-0 flex-1 flex-col">
         <AppHeader role={userRole} currentUser={currentUser} />
         <main className="mx-auto w-full max-w-7xl flex-1 p-4 sm:p-6 lg:p-8">
-          {userRole === "ADMIN" ? <AdminView /> : <EmployeeView currentUser={currentUser} />}
+          {userRole === "ADMIN" ? (
+            <AdminView currentUser={currentUser} complaints={mappedComplaints} />
+          ) : (
+            <EmployeeView currentUser={currentUser} complaints={mappedComplaints} />
+          )}
         </main>
       </div>
     </div>

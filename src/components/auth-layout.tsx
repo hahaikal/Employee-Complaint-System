@@ -43,8 +43,19 @@ export function AuthLayout({
         </p>
       </div>
 
-      <div className="flex items-center justify-center bg-background px-4 py-12 sm:px-8">
-        <div className="w-full max-w-md">{children}</div>
+      <div className="flex flex-col items-center justify-center bg-background px-4 py-12 sm:px-8">
+        <div className="w-full max-w-md">
+          <Link
+            href="/"
+            className="mb-8 flex items-center gap-3 lg:hidden justify-center"
+          >
+            <span className="flex size-10 items-center justify-center rounded-xl bg-brand text-brand-foreground shadow-soft">
+              <Building2 className="size-5" />
+            </span>
+            <span className="text-xl font-bold tracking-tight text-heading">SIPKA</span>
+          </Link>
+          {children}
+        </div>
       </div>
     </div>
   );

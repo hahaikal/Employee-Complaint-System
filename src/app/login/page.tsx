@@ -42,19 +42,23 @@ export default function LoginPage() {
     if (data.user) {
       const { data: userData, error: userError } = await supabase
         .from('users')
-        .select('role')
+        .select('role, status_akun')
         .eq('id', data.user.id)
         .single();
 
       if (userError) {
-        toast.error('Gagal mengambil data user');
+        console.error('Supabase user fetch error:', userError);
+        toast.error(`Gagal mengambil data user: ${userError.message || '500 Server Error'}`);
+        await supabase.auth.signOut();
+      } else if (userData.status_akun === 'Menunggu Persetujuan') {
+        toast.error('Akun Anda masih menunggu persetujuan Admin.');
+        await supabase.auth.signOut();
+      } else if (userData.status_akun !== 'Aktif') {
+        toast.error(`Akun Anda tidak dapat digunakan (Status: ${userData.status_akun}).`);
+        await supabase.auth.signOut();
       } else {
         toast.success('Login berhasil!');
-        if (userData.role === 'admin_ga') {
-          router.push('/admin/dashboard');
-        } else {
-          router.push('/dashboard');
-        }
+        router.push('/dashboard');
         router.refresh();
       }
     }

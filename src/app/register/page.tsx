@@ -70,7 +70,8 @@ export default function RegisterPage() {
     }
 
     if (data.user) {
-      toast.success('Registrasi berhasil! Silakan login.');
+      await supabase.auth.signOut();
+      toast.success('Registrasi berhasil! Akun Anda sedang menunggu persetujuan Admin.');
       router.push('/login');
     }
 
