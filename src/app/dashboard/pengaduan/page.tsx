@@ -1,23 +1,18 @@
-import { AdminView } from "@/components/dashboard/admin-view";
 import { EmployeeView } from "@/components/dashboard/employee-view";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
-export default async function DashboardPage() {
+export default async function PengaduanSayaPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login");
-  }
+  if (!user) redirect("/login");
 
   const { data: profile } = await supabase
     .from("users")
     .select("role, nama, nik")
     .eq("id", user.id)
     .single();
-
-  const userRole = profile?.role === "admin_ga" ? "ADMIN" : "KARYAWAN";
 
   const currentUser = {
     name: profile?.nama || user.user_metadata?.nama || "Pengguna",
@@ -27,7 +22,7 @@ export default async function DashboardPage() {
     email: user.email || "-",
   };
 
-  const { data: rawComplaints, error: complaintsError } = await supabase
+  const { data: rawComplaints } = await supabase
     .from("pengaduan")
     .select(`
       id,
@@ -39,11 +34,8 @@ export default async function DashboardPage() {
       kategori_pengaduan (nama_kategori),
       users (nama)
     `)
+    .eq("user_id", user.id)
     .order("created_at", { ascending: false });
-
-  if (complaintsError) {
-    console.error("Error fetching complaints:", complaintsError);
-  }
 
   const mappedComplaints = (rawComplaints || []).map((c: any) => ({
     id: c.id,
@@ -57,9 +49,9 @@ export default async function DashboardPage() {
     department: "Divisi",
   }));
 
-  if (userRole === "ADMIN") {
-    return <AdminView currentUser={currentUser} complaints={mappedComplaints} />;
-  }
-
-  return <EmployeeView currentUser={currentUser} complaints={mappedComplaints} />;
+  return (
+    <div className="flex flex-col gap-6">
+      <EmployeeView currentUser={currentUser} complaints={mappedComplaints} />
+    </div>
+  );
 }

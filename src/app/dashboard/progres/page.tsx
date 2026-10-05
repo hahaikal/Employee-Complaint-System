@@ -1,33 +1,24 @@
 import { AdminView } from "@/components/dashboard/admin-view";
-import { EmployeeView } from "@/components/dashboard/employee-view";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
-export default async function DashboardPage() {
+export default async function ProgresPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login");
-  }
+  if (!user) redirect("/login");
 
   const { data: profile } = await supabase
     .from("users")
-    .select("role, nama, nik")
+    .select("role")
     .eq("id", user.id)
     .single();
 
-  const userRole = profile?.role === "admin_ga" ? "ADMIN" : "KARYAWAN";
+  if (profile?.role !== "admin_ga") {
+    redirect("/dashboard");
+  }
 
-  const currentUser = {
-    name: profile?.nama || user.user_metadata?.nama || "Pengguna",
-    nik: profile?.nik || user.user_metadata?.nik || "-",
-    position: "Karyawan",
-    department: "Divisi",
-    email: user.email || "-",
-  };
-
-  const { data: rawComplaints, error: complaintsError } = await supabase
+  const { data: rawComplaints } = await supabase
     .from("pengaduan")
     .select(`
       id,
@@ -41,10 +32,6 @@ export default async function DashboardPage() {
     `)
     .order("created_at", { ascending: false });
 
-  if (complaintsError) {
-    console.error("Error fetching complaints:", complaintsError);
-  }
-
   const mappedComplaints = (rawComplaints || []).map((c: any) => ({
     id: c.id,
     nomor_pengaduan: c.nomor_pengaduan,
@@ -57,9 +44,9 @@ export default async function DashboardPage() {
     department: "Divisi",
   }));
 
-  if (userRole === "ADMIN") {
-    return <AdminView currentUser={currentUser} complaints={mappedComplaints} />;
-  }
-
-  return <EmployeeView currentUser={currentUser} complaints={mappedComplaints} />;
+  return (
+    <div className="flex flex-col gap-6">
+      <AdminView complaints={mappedComplaints} />
+    </div>
+  );
 }
