@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, LogOut, Menu, Search } from "lucide-react";
+import { LogOut, Menu, Search } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { AppSidebar } from "./app-sidebar";
+import { NotificationDropdown } from "./notification-dropdown";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 
@@ -61,14 +62,7 @@ export function AppHeader({ role, currentUser }: { role: string, currentUser: an
         </div>
 
         <div className="ml-auto flex items-center gap-2 sm:gap-4">
-          <button
-            type="button"
-            className="relative flex h-10 w-10 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
-            aria-label="Notifikasi"
-          >
-            <Bell className="h-5 w-5" />
-            <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-amber-400 ring-2 ring-white" />
-          </button>
+          <NotificationDropdown role={role} currentUserId={currentUser?.id} />
 
           <div className="hidden h-8 w-px bg-slate-200 sm:block" />
 

@@ -26,10 +26,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const userRole = profile?.role === "admin_ga" ? "ADMIN" : "KARYAWAN";
 
   const currentUser = {
+    id: user.id,
     name: profile?.nama || user.user_metadata?.nama || "Pengguna",
     nik: profile?.nik || user.user_metadata?.nik || "-",
-    position: "Karyawan",
-    department: "Divisi",
+    position: profile?.jabatan || "Karyawan",
+    department: profile?.departemen || "Divisi",
     email: user.email || "-",
   };
 

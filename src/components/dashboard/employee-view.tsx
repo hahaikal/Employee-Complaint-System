@@ -60,7 +60,7 @@ function ProfileSummary({ currentUser }: { currentUser: any }) {
         </div>
 
         <Link 
-          href="/dashboard/pengaduan/create"
+          href="/dashboard/pengaduan"
           className={cn(buttonVariants({ size: "lg" }), "w-fit shrink-0 rounded-full bg-sidebar-brand px-6 font-semibold text-white shadow-lg shadow-sidebar-brand/25 hover:bg-sidebar-brand-hover")}
         >
           <Plus className="h-4 w-4" />
@@ -150,7 +150,7 @@ function EmptyState() {
         Mulai dengan membuat pengajuan pertama Anda.
       </p>
       <Link 
-        href="/dashboard/pengaduan/create" 
+        href="/dashboard/pengaduan" 
         className={cn(buttonVariants(), "mt-6 rounded-full bg-sidebar-brand px-6 font-semibold text-white shadow-lg shadow-sidebar-brand/25 hover:bg-sidebar-brand-hover")}
       >
         <Plus className="h-4 w-4" />

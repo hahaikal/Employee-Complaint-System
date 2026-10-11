@@ -96,11 +96,14 @@ export function PengaduanClient({
     
     const nomorPengaduan = `PGD-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(result.data.category);
+
     const { error } = await supabase.from("pengaduan").insert({
       nomor_pengaduan: nomorPengaduan,
       user_id: userId,
       judul: result.data.title,
-      kategori_id: result.data.category,
+      kategori_id: isUUID ? result.data.category : null,
+      informasi_tambahan: !isUUID ? `Kategori: ${result.data.category}` : null,
       lokasi: result.data.location,
       detail_pengaduan: result.data.description,
       status: "DIAJUKAN",
@@ -155,7 +158,7 @@ export function PengaduanClient({
               </Label>
               <Select
                 value={form.category}
-                onValueChange={(value) => setField("category", value)}
+                onValueChange={(value) => setField("category", value ?? "")}
               >
                 <SelectTrigger
                   id="category"
