@@ -68,7 +68,7 @@ export function AppHeader({ role, currentUser }: { role: string, currentUser: an
 
           <div className="flex items-center gap-3">
             <Avatar className="h-9 w-9 border border-slate-200">
-              <AvatarImage src={"https://github.com/shadcn.png"} alt={currentUser.name} />
+              <AvatarImage src={currentUser?.foto_url || undefined} alt={currentUser.name} />
               <AvatarFallback className="bg-sidebar-brand text-xs font-semibold text-white">
                 {currentUser.name.substring(0, 2).toUpperCase()}
               </AvatarFallback>

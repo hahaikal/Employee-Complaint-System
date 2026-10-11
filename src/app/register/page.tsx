@@ -45,6 +45,7 @@ export default function RegisterPage() {
           nik: formData.nik,
           no_hp: formData.no_hp,
           role: 'Karyawan',
+          status_akun: 'Menunggu Persetujuan',
         },
       },
     });
@@ -70,8 +71,25 @@ export default function RegisterPage() {
     }
 
     if (data.user) {
+      // Ensure status_akun is explicitly set to Menunggu Persetujuan in users table
+      try {
+        await supabase
+          .from('users')
+          .update({
+            nama: formData.nama,
+            username: formData.username,
+            nik: formData.nik,
+            no_hp: formData.no_hp,
+            role: 'Karyawan',
+            status_akun: 'Menunggu Persetujuan',
+          })
+          .eq('id', data.user.id);
+      } catch (err) {
+        console.warn('Could not update users table directly:', err);
+      }
+
       await supabase.auth.signOut();
-      toast.success('Registrasi berhasil! Akun Anda sedang menunggu persetujuan Admin.');
+      toast.success('Registrasi berhasil! Akun Anda sedang ditinjau, silakan tunggu persetujuan Admin.');
       router.push('/login');
     }
 

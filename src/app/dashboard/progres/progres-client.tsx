@@ -123,13 +123,17 @@ export function ProgresClient({
     setSubmitting(true);
 
     try {
-      // Record verification
-      await supabase.from("verifikasi_pengaduan").insert({
-        pengaduan_id: selectedComplaint.id,
-        user_id: currentUserId,
-        hasil_verifikasi: hasilVerifikasi,
-        catatan_verifikasi: catatanVerifikasi,
-      });
+      // Record verification (non-blocking if RLS is not yet applied)
+      try {
+        await supabase.from("verifikasi_pengaduan").insert({
+          pengaduan_id: selectedComplaint.id,
+          user_id: currentUserId,
+          hasil_verifikasi: hasilVerifikasi,
+          catatan_verifikasi: catatanVerifikasi,
+        });
+      } catch (logErr) {
+        console.warn("Catatan verifikasi tidak tersimpan ke tabel log (cek RLS verifikasi_pengaduan):", logErr);
+      }
 
       // Update status to DIVERIFIKASI
       const { error } = await supabase
@@ -156,16 +160,20 @@ export function ProgresClient({
     setSubmitting(true);
 
     try {
-      // Record penanganan
-      await supabase.from("penanganan").insert({
-        pengaduan_id: selectedComplaint.id,
-        user_id: currentUserId,
-        jenis_penanganan: jenisPenanganan,
-        tanggal_mulai: new Date().toISOString().split("T")[0],
-        estimasi_selesai: estimasiSelesai || null,
-        status_penanganan: "DIPROSES",
-        catatan: catatanPenanganan,
-      });
+      // Record penanganan (non-blocking if RLS is not yet applied)
+      try {
+        await supabase.from("penanganan").insert({
+          pengaduan_id: selectedComplaint.id,
+          user_id: currentUserId,
+          jenis_penanganan: jenisPenanganan,
+          tanggal_mulai: new Date().toISOString().split("T")[0],
+          estimasi_selesai: estimasiSelesai || null,
+          status_penanganan: "DIPROSES",
+          catatan: catatanPenanganan,
+        });
+      } catch (logErr) {
+        console.warn("Catatan penanganan tidak tersimpan ke tabel log (cek RLS penanganan):", logErr);
+      }
 
       // Update status to DIPROSES
       const { error } = await supabase
@@ -453,10 +461,10 @@ export function ProgresClient({
                   value={hasilVerifikasi}
                   onValueChange={(val) => setHasilVerifikasi(val === "Tidak Lengkap" ? "Tidak Lengkap" : "Lengkap")}
                 >
-                  <SelectTrigger className="border-slate-200">
+                  <SelectTrigger className="w-full h-10 border-slate-200 bg-white">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="w-[var(--anchor-width)]">
                     <SelectItem value="Lengkap">Lengkap (Terima & Lanjutkan ke Verifikasi)</SelectItem>
                     <SelectItem value="Tidak Lengkap">Tidak Lengkap (Butuh konfirmasi pelapor)</SelectItem>
                   </SelectContent>
@@ -509,10 +517,10 @@ export function ProgresClient({
                   value={jenisPenanganan}
                   onValueChange={(val) => setJenisPenanganan(val === "VENDOR" ? "VENDOR" : "GA")}
                 >
-                  <SelectTrigger className="border-slate-200">
+                  <SelectTrigger className="w-full h-10 border-slate-200 bg-white">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="w-[var(--anchor-width)]">
                     <SelectItem value="GA">Tim GA Internal (Teknisi Kantor)</SelectItem>
                     <SelectItem value="VENDOR">Vendor Eksternal</SelectItem>
                   </SelectContent>

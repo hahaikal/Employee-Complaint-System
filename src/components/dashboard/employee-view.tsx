@@ -28,7 +28,7 @@ function ProfileSummary({ currentUser }: { currentUser: any }) {
       <CardContent className="flex flex-col gap-6 p-6 lg:flex-row lg:items-center">
         <div className="flex items-center gap-5">
           <Avatar className="h-20 w-20 shrink-0 border-4 border-white shadow-md ring-2 ring-sidebar-brand/10">
-            <AvatarImage src={"https://github.com/shadcn.png"} alt={currentUser.name} />
+            <AvatarImage src={currentUser?.foto_url || undefined} alt={currentUser.name} />
             <AvatarFallback className="bg-sidebar-brand text-lg font-semibold text-white">
               {currentUser.name.substring(0, 2).toUpperCase()}
             </AvatarFallback>

@@ -13,7 +13,7 @@ export default async function DashboardPage() {
 
   const { data: profile } = await supabase
     .from("users")
-    .select("role, nama, nik")
+    .select("role, nama, nik, email, jabatan, departemen, foto_url")
     .eq("id", user.id)
     .single();
 
@@ -22,9 +22,10 @@ export default async function DashboardPage() {
   const currentUser = {
     name: profile?.nama || user.user_metadata?.nama || "Pengguna",
     nik: profile?.nik || user.user_metadata?.nik || "-",
-    position: "Karyawan",
-    department: "Divisi",
-    email: user.email || "-",
+    position: profile?.jabatan || "Karyawan",
+    department: profile?.departemen || "Divisi",
+    email: profile?.email || user.email || "-",
+    foto_url: profile?.foto_url || user.user_metadata?.foto_url || null,
   };
 
   const { data: rawComplaints, error: complaintsError } = await supabase

@@ -48,7 +48,8 @@ export default async function ProfilPage() {
   const currentUser = {
     name: profile?.nama || user.user_metadata?.nama || "Pengguna",
     nik: profile?.nik || user.user_metadata?.nik || "-",
-    email: user.email || "-",
+    email: profile?.email || user.email || "-",
+    foto_url: profile?.foto_url || user.user_metadata?.foto_url || null,
     phone: profile?.no_hp || "+62 812-3456-7890",
     position: profile?.jabatan || "Karyawan",
     department: profile?.departemen || "Divisi",
@@ -73,7 +74,7 @@ export default async function ProfilPage() {
         <CardContent className="relative flex flex-col gap-5 p-6 pt-0 sm:flex-row sm:items-end sm:justify-between">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
             <Avatar className="-mt-12 h-24 w-24 shrink-0 border-4 border-white shadow-lg">
-              <AvatarImage src={"https://github.com/shadcn.png"} alt={currentUser.name} />
+              <AvatarImage src={currentUser.foto_url || undefined} alt={currentUser.name} />
               <AvatarFallback className="bg-sidebar-brand text-2xl font-semibold text-white">
                 {currentUser.name.substring(0, 2).toUpperCase()}
               </AvatarFallback>

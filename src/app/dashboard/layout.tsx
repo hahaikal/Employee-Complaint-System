@@ -31,7 +31,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
     nik: profile?.nik || user.user_metadata?.nik || "-",
     position: profile?.jabatan || "Karyawan",
     department: profile?.departemen || "Divisi",
-    email: user.email || "-",
+    email: profile?.email || user.email || "-",
+    foto_url: profile?.foto_url || user.user_metadata?.foto_url || null,
   };
 
   return (

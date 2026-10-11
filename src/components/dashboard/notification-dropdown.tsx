@@ -180,15 +180,28 @@ export function NotificationDropdown({
     const timer = setTimeout(() => {
       if (isSubscribed) void fetchNotifications();
     }, 0);
+
     const interval = setInterval(() => {
       if (isSubscribed) void fetchNotifications();
-    }, 30000);
+    }, 10000);
+
+    const channel = supabase
+      .channel("realtime_notifications")
+      .on("postgres_changes", { event: "*", schema: "public", table: "users" }, () => {
+        if (isSubscribed) void fetchNotifications();
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "pengaduan" }, () => {
+        if (isSubscribed) void fetchNotifications();
+      })
+      .subscribe();
+
     return () => {
       isSubscribed = false;
       clearTimeout(timer);
       clearInterval(interval);
+      void supabase.removeChannel(channel);
     };
-  }, [fetchNotifications]);
+  }, [fetchNotifications, supabase]);
 
   // Click outside listener
   useEffect(() => {

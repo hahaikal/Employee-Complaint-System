@@ -40,26 +40,31 @@ export default function LoginPage() {
     }
 
     if (data.user) {
+      const metaStatus = data.user.user_metadata?.status_akun;
+
       const { data: userData, error: userError } = await supabase
         .from('users')
         .select('role, status_akun')
         .eq('id', data.user.id)
         .single();
 
-      if (userError) {
-        console.error('Supabase user fetch error:', userError);
-        toast.error(`Gagal mengambil data user: ${userError.message || '500 Server Error'}`);
-        await supabase.auth.signOut();
-      } else if (userData.status_akun === 'Menunggu Persetujuan') {
-        toast.error('Akun Anda masih menunggu persetujuan Admin.');
-        await supabase.auth.signOut();
-      } else if (userData.status_akun === 'Ditolak' || userData.status_akun !== 'Aktif') {
-        toast.error('Akun Anda ditangguhkan, harap hubungi admin.');
+      if (userError || !userData) {
+        toast.error('Akun Anda tidak ditemukan atau telah dihapus oleh Admin.');
         await supabase.auth.signOut();
       } else {
-        toast.success('Login berhasil!');
-        router.push('/dashboard');
-        router.refresh();
+        const currentStatus = userData.status_akun || metaStatus || 'Menunggu Persetujuan';
+
+        if (currentStatus === 'Menunggu Persetujuan') {
+          toast.error('Akun sedang ditinjau, coba beberapa saat lagi.');
+          await supabase.auth.signOut();
+        } else if (currentStatus === 'Ditolak' || currentStatus !== 'Aktif') {
+          toast.error('Akun Anda ditangguhkan, harap hubungi admin.');
+          await supabase.auth.signOut();
+        } else {
+          toast.success('Login berhasil!');
+          router.push('/dashboard');
+          router.refresh();
+        }
       }
     }
 
