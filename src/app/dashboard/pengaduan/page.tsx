@@ -1,6 +1,6 @@
-import { EmployeeView } from "@/components/dashboard/employee-view";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import { PengaduanClient } from "./pengaduan-client";
 
 export default async function PengaduanSayaPage() {
   const supabase = await createClient();
@@ -8,20 +8,13 @@ export default async function PengaduanSayaPage() {
 
   if (!user) redirect("/login");
 
-  const { data: profile } = await supabase
-    .from("users")
-    .select("role, nama, nik")
-    .eq("id", user.id)
-    .single();
+  // Fetch categories
+  const { data: categories } = await supabase
+    .from("kategori_pengaduan")
+    .select("id, nama_kategori")
+    .order("nama_kategori");
 
-  const currentUser = {
-    name: profile?.nama || user.user_metadata?.nama || "Pengguna",
-    nik: profile?.nik || user.user_metadata?.nik || "-",
-    position: "Karyawan",
-    department: "Divisi",
-    email: user.email || "-",
-  };
-
+  // Fetch complaints
   const { data: rawComplaints } = await supabase
     .from("pengaduan")
     .select(`
@@ -51,7 +44,11 @@ export default async function PengaduanSayaPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <EmployeeView currentUser={currentUser} complaints={mappedComplaints} />
+      <PengaduanClient 
+        initialComplaints={mappedComplaints} 
+        categories={categories || []}
+        userId={user.id} 
+      />
     </div>
   );
 }

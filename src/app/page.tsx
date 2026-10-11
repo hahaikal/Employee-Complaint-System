@@ -58,7 +58,7 @@ export default function Index() {
       </header>
 
       <main>
-        <section className="mx-auto max-w-6xl px-4 pt-16 pb-12 sm:px-6 sm:pt-24">
+        <section className="mx-auto max-w-6xl px-4 pb-12 sm:px-6 sm:pt-12">
           <div className="mx-auto max-w-3xl text-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-body shadow-soft">
               <ShieldCheck className="size-3.5 text-brand" />
@@ -88,7 +88,7 @@ export default function Index() {
             </div>
           </div>
 
-          <div className="mx-auto mt-14 grid max-w-4xl gap-4 sm:grid-cols-3">
+          <div className="mx-auto mt-10 grid max-w-4xl gap-4 sm:grid-cols-3">
             {[
               { icon: Timer, label: "Respons cepat", value: "< 1x24 jam" },
               { icon: ClipboardList, label: "Pengaduan tertangani", value: "1.240+" },
