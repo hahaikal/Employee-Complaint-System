@@ -1,14 +1,10 @@
 import {
   CalendarDays,
-  Check,
   CheckCircle2,
-  Eye,
   Inbox,
   LoaderCircle,
-  RefreshCw,
 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { Complaint, ComplaintStatus } from "./data";
@@ -17,27 +13,22 @@ import { StatusBadge } from "./status-badge";
 const columns: {
   status: ComplaintStatus;
   title: string;
-  action: { label: string; icon: typeof Check };
 }[] = [
   {
     status: "DIAJUKAN",
     title: "Pengajuan Masuk",
-    action: { label: "Verifikasi", icon: Check },
   },
   {
     status: "DIVERIFIKASI",
     title: "Diverifikasi",
-    action: { label: "Tentukan Penanganan", icon: Check },
   },
   {
     status: "DIPROSES",
     title: "Sedang Diproses",
-    action: { label: "Update Status", icon: RefreshCw },
   },
   {
     status: "SELESAI",
     title: "Selesai",
-    action: { label: "Lihat Detail", icon: Eye },
   },
 ];
 
@@ -121,7 +112,7 @@ export function AdminView({ currentUser, complaints }: { currentUser?: any, comp
 
               <div className="flex flex-col gap-3">
                 {cards.map((card) => (
-                  <KanbanCard key={card.id} complaint={card} action={col.action} />
+                  <KanbanCard key={card.id} complaint={card} />
                 ))}
                 {cards.length === 0 && (
                   <p className="rounded-xl border border-dashed border-slate-200 py-8 text-center text-xs text-slate-400">
@@ -139,10 +130,8 @@ export function AdminView({ currentUser, complaints }: { currentUser?: any, comp
 
 function KanbanCard({
   complaint,
-  action,
 }: {
   complaint: Complaint;
-  action: { label: string; icon: typeof Check };
 }) {
   return (
     <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-4 transition-all hover:bg-white hover:shadow-md">
@@ -162,14 +151,6 @@ function KanbanCard({
         </span>
         <StatusBadge status={complaint.status} />
       </div>
-      <Button
-        variant="outline"
-        size="sm"
-        className="mt-3 w-full rounded-full border-slate-200 text-xs font-semibold text-slate-700 hover:bg-sidebar-brand hover:text-white hover:border-sidebar-brand"
-      >
-        <action.icon className="h-3.5 w-3.5" />
-        {action.label}
-      </Button>
     </div>
   );
 }

@@ -53,8 +53,8 @@ export default function LoginPage() {
       } else if (userData.status_akun === 'Menunggu Persetujuan') {
         toast.error('Akun Anda masih menunggu persetujuan Admin.');
         await supabase.auth.signOut();
-      } else if (userData.status_akun !== 'Aktif') {
-        toast.error(`Akun Anda tidak dapat digunakan (Status: ${userData.status_akun}).`);
+      } else if (userData.status_akun === 'Ditolak' || userData.status_akun !== 'Aktif') {
+        toast.error('Akun Anda ditangguhkan, harap hubungi admin.');
         await supabase.auth.signOut();
       } else {
         toast.success('Login berhasil!');

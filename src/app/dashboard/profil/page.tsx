@@ -87,13 +87,15 @@ export default async function ProfilPage() {
               </p>
             </div>
           </div>
-          <Button
-            variant="outline"
-            className="w-fit shrink-0 rounded-full border-slate-200 font-semibold text-slate-700 hover:bg-slate-100"
-          >
-            <Pencil className="h-4 w-4 mr-2" />
-            Edit Profil
-          </Button>
+          {profile?.role === "admin_ga" || profile?.role === "GA" ? (
+            <Button
+              variant="outline"
+              className="w-fit shrink-0 rounded-full border-slate-200 font-semibold text-slate-700 hover:bg-slate-100"
+            >
+              <Pencil className="h-4 w-4 mr-2" />
+              Edit Profil
+            </Button>
+          ) : null}
         </CardContent>
       </Card>
 

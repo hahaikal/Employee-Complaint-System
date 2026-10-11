@@ -1,4 +1,4 @@
-import { AdminView } from "@/components/dashboard/admin-view";
+import { ProgresClient, type ProgresComplaint } from "./progres-client";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -14,7 +14,7 @@ export default async function ProgresPage() {
     .eq("id", user.id)
     .single();
 
-  if (profile?.role !== "admin_ga") {
+  if (profile?.role !== "admin_ga" && profile?.role !== "GA") {
     redirect("/dashboard");
   }
 
@@ -24,6 +24,7 @@ export default async function ProgresPage() {
       id,
       nomor_pengaduan,
       judul,
+      lokasi,
       detail_pengaduan,
       status,
       tanggal_pengaduan,
@@ -33,7 +34,7 @@ export default async function ProgresPage() {
     `)
     .order("created_at", { ascending: false });
 
-  const mappedComplaints = (rawComplaints || []).map((c: any) => {
+  const mappedComplaints: ProgresComplaint[] = (rawComplaints || []).map((c: any) => {
     let categoryName = c.kategori_pengaduan?.nama_kategori;
     if (!categoryName && c.informasi_tambahan?.startsWith("Kategori: ")) {
       categoryName = c.informasi_tambahan.replace("Kategori: ", "");
@@ -41,19 +42,20 @@ export default async function ProgresPage() {
     return {
       id: c.id,
       nomor_pengaduan: c.nomor_pengaduan,
-      title: c.judul,
-      category: categoryName || "Umum",
-      description: c.detail_pengaduan,
-      date: c.tanggal_pengaduan ? new Date(c.tanggal_pengaduan).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : "-",
+      judul: c.judul,
+      lokasi: c.lokasi || "-",
+      detail_pengaduan: c.detail_pengaduan,
       status: c.status,
-      employee: c.users?.nama || "Unknown",
-      department: "Divisi",
+      tanggal_pengaduan: c.tanggal_pengaduan ? new Date(c.tanggal_pengaduan).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : "-",
+      kategori: categoryName || "Umum",
+      nama_pelapor: c.users?.nama || "Karyawan",
     };
   });
 
   return (
-    <div className="flex flex-col gap-6">
-      <AdminView complaints={mappedComplaints} />
-    </div>
+    <ProgresClient 
+      initialComplaints={mappedComplaints} 
+      currentUserId={user.id} 
+    />
   );
 }
