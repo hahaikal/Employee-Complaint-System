@@ -116,6 +116,7 @@ function AdminViewInner({
       <div className="grid gap-4 md:grid-cols-4">
         {columns.map((col) => {
           const cards = filteredComplaints.filter((c) => c.status === col.status);
+          const visibleCards = cards.slice(0, 3);
 
           return (
             <div
@@ -141,7 +142,7 @@ function AdminViewInner({
               </div>
 
               <div className="flex flex-col gap-3">
-                {cards.map((card) => (
+                {visibleCards.map((card) => (
                   <KanbanCard
                     key={card.id}
                     complaint={card}

@@ -1,6 +1,3 @@
--- Migration: Allow users (Admin & Karyawan) to update their own profile credentials
--- and ensure storage/table RLS policies allow uploading & reading complaint/completion evidence.
-
 -- 1. Function for logged-in user to sync their own email & name in auth.users
 CREATE OR REPLACE FUNCTION public.update_own_profile_credentials(
   new_email text,

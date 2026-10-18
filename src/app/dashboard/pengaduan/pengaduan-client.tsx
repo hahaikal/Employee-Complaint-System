@@ -215,8 +215,13 @@ function PengaduanClientInner({
     );
   });
 
+  const uniqueCategories = categories.filter((cat, index, self) => {
+    const key = (cat.nama_kategori || "").trim().toLowerCase();
+    return index === self.findIndex((c) => (c.nama_kategori || "").trim().toLowerCase() === key);
+  });
+
   // Helper to get selected category display name
-  const selectedCategoryName = categories.find((c) => c.id === form.category)?.nama_kategori;
+  const selectedCategoryName = uniqueCategories.find((c) => c.id === form.category)?.nama_kategori;
 
   return (
     <div className="grid items-start gap-6 lg:grid-cols-5">
@@ -267,7 +272,7 @@ function PengaduanClientInner({
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map((cat) => (
+                  {uniqueCategories.map((cat) => (
                     <SelectItem key={cat.id} value={cat.id}>
                       {cat.nama_kategori}
                     </SelectItem>

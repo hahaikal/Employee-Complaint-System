@@ -26,8 +26,17 @@ export default async function PengaduanSayaPage() {
     { id: "Lainnya", nama_kategori: "Lainnya" },
   ];
 
-  const categories =
+  const rawCategories =
     dbCategories && dbCategories.length > 0 ? dbCategories : defaultCategories;
+
+  // Deduplicate categories by nama_kategori (case-insensitive)
+  const seenNames = new Set<string>();
+  const categories = rawCategories.filter((cat) => {
+    const key = (cat.nama_kategori || "").trim().toLowerCase();
+    if (!key || seenNames.has(key)) return false;
+    seenNames.add(key);
+    return true;
+  });
 
   // Fetch enriched complaints with evidence & handling details
   const { complaints } = await fetchEnrichedComplaints(supabase, user.id);
