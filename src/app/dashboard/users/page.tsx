@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
+import { useRouter } from "next/navigation";
 import {
   AlertTriangle,
   Camera,
@@ -51,10 +52,12 @@ export type UserItem = {
 };
 
 export default function UsersPage() {
+  const router = useRouter();
   const supabase = createClient();
 
   const [users, setUsers] = useState<UserItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAuthorized, setIsAuthorized] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTabTable2, setActiveTabTable2] = useState<"SEMUA" | "AKTIF" | "DITOLAK">("SEMUA");
 
@@ -76,6 +79,28 @@ export default function UsersPage() {
 
   const fetchUsers = useCallback(async () => {
     try {
+      const {
+        data: { user: authUser },
+      } = await supabase.auth.getUser();
+
+      if (!authUser) {
+        router.replace("/login");
+        return;
+      }
+
+      const { data: currentProfile } = await supabase
+        .from("users")
+        .select("role")
+        .eq("id", authUser.id)
+        .single();
+
+      if (currentProfile?.role !== "admin_ga" && currentProfile?.role !== "GA") {
+        router.replace("/dashboard");
+        return;
+      }
+
+      setIsAuthorized(true);
+
       // First attempt to fetch with all columns
       let { data, error } = await supabase
         .from("users")
@@ -102,7 +127,7 @@ export default function UsersPage() {
     } finally {
       setLoading(false);
     }
-  }, [supabase]);
+  }, [router, supabase]);
 
   useEffect(() => {
     let isMounted = true;
@@ -330,6 +355,10 @@ export default function UsersPage() {
     if (activeTabTable2 === "DITOLAK") return u.status_akun === "Ditolak" || u.status_akun === "Nonaktif";
     return true;
   });
+
+  if (!loading && !isAuthorized) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col gap-8">

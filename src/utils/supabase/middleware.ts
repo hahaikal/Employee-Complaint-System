@@ -42,14 +42,41 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // Optional: Redirect authenticated users away from login/register pages
+  // Redirect authenticated users away from login/register pages
   if (user && isAuthRoute) {
     const url = request.nextUrl.clone()
-    // By default, redirect to /dashboard.
-    // In a real app we'd fetch their role, but doing it in middleware adds DB latency.
-    // For now we'll route to /dashboard and let the dashboard client/server component do the role check.
     url.pathname = '/dashboard'
     return NextResponse.redirect(url)
+  }
+
+  // Role-based protection for Admin-only and Karyawan-only routes
+  const pathname = request.nextUrl.pathname
+  const isAdminOnlyRoute =
+    pathname.startsWith('/dashboard/users') ||
+    pathname.startsWith('/dashboard/user') ||
+    pathname.startsWith('/dashboard/progres')
+  const isEmployeeOnlyRoute = pathname.startsWith('/dashboard/pengaduan')
+
+  if (user && (isAdminOnlyRoute || isEmployeeOnlyRoute)) {
+    const { data: profile } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    const isAdmin = profile?.role === 'admin_ga' || profile?.role === 'GA'
+
+    if (isAdminOnlyRoute && !isAdmin) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/dashboard'
+      return NextResponse.redirect(url)
+    }
+
+    if (isEmployeeOnlyRoute && isAdmin) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/dashboard'
+      return NextResponse.redirect(url)
+    }
   }
 
   return supabaseResponse

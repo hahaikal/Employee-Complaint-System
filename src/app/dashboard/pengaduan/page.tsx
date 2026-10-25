@@ -11,6 +11,16 @@ export default async function PengaduanSayaPage() {
 
   if (!user) redirect("/login");
 
+  const { data: profile } = await supabase
+    .from("users")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (profile?.role === "admin_ga" || profile?.role === "GA") {
+    redirect("/dashboard");
+  }
+
   // Fetch categories
   const { data: dbCategories } = await supabase
     .from("kategori_pengaduan")
