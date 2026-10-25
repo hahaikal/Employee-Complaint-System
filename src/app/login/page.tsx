@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,31 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    const checkAuthenticatedUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user || !isMounted) return;
+
+      const { data: userData } = await supabase
+        .from('users')
+        .select('status_akun')
+        .eq('id', user.id)
+        .single();
+
+      const statusAkun = userData?.status_akun || user.user_metadata?.status_akun || 'Aktif';
+      if (statusAkun === 'Aktif') {
+        router.replace('/dashboard');
+      }
+    };
+    void checkAuthenticatedUser();
+    return () => {
+      isMounted = false;
+    };
+  }, [router, supabase]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

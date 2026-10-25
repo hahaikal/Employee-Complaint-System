@@ -113,7 +113,7 @@ function AdminViewInner({
         ))}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 lg:grid-cols-4">
         {columns.map((col) => {
           const cards = filteredComplaints.filter((c) => c.status === col.status);
           const visibleCards = cards.slice(0, 3);

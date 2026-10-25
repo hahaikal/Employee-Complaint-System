@@ -10,8 +10,8 @@ export function AuthLayout({
   quote: string;
 }) {
   return (
-    <div className="grid min-h-screen lg:grid-cols-2">
-      <div className="relative hidden overflow-hidden bg-brand p-12 lg:flex lg:flex-col lg:justify-between">
+    <div className="flex min-h-screen flex-col lg:grid lg:grid-cols-2">
+      <div className="relative flex min-h-[50vh] flex-col justify-between overflow-hidden bg-brand p-6 sm:p-8 md:p-10 lg:min-h-screen lg:p-12">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 opacity-30"
@@ -24,16 +24,18 @@ export function AuthLayout({
           href="/"
           className="relative flex items-center gap-3 text-brand-foreground"
         >
-          <span className="flex size-11 items-center justify-center rounded-2xl bg-white/15 backdrop-blur">
-            <Building2 className="size-6" />
+          <span className="flex size-10 sm:size-11 items-center justify-center rounded-2xl bg-white/15 backdrop-blur">
+            <Building2 className="size-5 sm:size-6" />
           </span>
           <span className="text-lg font-semibold tracking-tight">SIPKA</span>
         </Link>
 
-        <div className="relative max-w-md text-brand-foreground">
-          <Quote className="size-9 opacity-60" />
-          <p className="mt-5 text-2xl leading-relaxed font-medium">{quote}</p>
-          <p className="mt-6 text-sm opacity-80">
+        <div className="relative my-6 max-w-md text-brand-foreground lg:my-0">
+          <Quote className="size-7 opacity-60 sm:size-8 lg:size-9" />
+          <p className="mt-3 text-lg leading-relaxed font-medium sm:mt-4 sm:text-xl lg:mt-5 lg:text-2xl">
+            {quote}
+          </p>
+          <p className="mt-3 text-xs opacity-80 sm:mt-4 sm:text-sm lg:mt-6">
             Divisi General Affairs — Sistem Informasi Pengaduan Karyawan
           </p>
         </div>
@@ -43,17 +45,8 @@ export function AuthLayout({
         </p>
       </div>
 
-      <div className="flex flex-col items-center justify-center bg-background px-4 py-12 sm:px-8">
+      <div className="flex min-h-[50vh] flex-1 flex-col items-center justify-center bg-background px-4 py-8 sm:px-8 sm:py-12 lg:min-h-screen">
         <div className="w-full max-w-md">
-          <Link
-            href="/"
-            className="mb-8 flex items-center gap-3 lg:hidden justify-center"
-          >
-            <span className="flex size-10 items-center justify-center rounded-xl bg-brand text-brand-foreground shadow-soft">
-              <Building2 className="size-5" />
-            </span>
-            <span className="text-xl font-bold tracking-tight text-heading">SIPKA</span>
-          </Link>
           {children}
         </div>
       </div>
