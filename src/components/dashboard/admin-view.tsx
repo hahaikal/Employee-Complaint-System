@@ -15,11 +15,7 @@ import { cn } from "@/lib/utils";
 import type { Complaint, ComplaintStatus } from "./data";
 import { StatusBadge } from "./status-badge";
 import { ComplaintDetailModal } from "./complaint-detail-modal";
-import {
-  TimeframeFilterControl,
-  useAdminTimeframe,
-  isComplaintInTimeframe,
-} from "@/utils/timeframe-filter";
+import { DateFilter, useDateFilter, isWithinDateRange } from "./date-filter";
 
 const columns: {
   status: ComplaintStatus;
@@ -52,11 +48,11 @@ function AdminViewInner({
   const searchParams = useSearchParams();
   const globalSearch = (searchParams.get("q") || "").trim().toLowerCase();
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
-  const { timeframe, setTimeframe } = useAdminTimeframe();
+  const { startDate, endDate } = useDateFilter();
 
   const filteredComplaints = complaints.filter((c) => {
-    const matchTime = isComplaintInTimeframe(c.raw_date, timeframe);
-    if (!matchTime) return false;
+    const matchDate = isWithinDateRange(c.raw_date, startDate, endDate);
+    if (!matchDate) return false;
     if (!globalSearch) return true;
     return (
       c.title.toLowerCase().includes(globalSearch) ||
@@ -101,7 +97,7 @@ function AdminViewInner({
           </p>
         </div>
 
-        <TimeframeFilterControl timeframe={timeframe} onChange={setTimeframe} />
+        <DateFilter />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">

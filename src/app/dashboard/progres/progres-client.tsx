@@ -46,10 +46,10 @@ import {
 import { cn } from "@/lib/utils";
 import type { ComplaintStatus, EvidenceFile } from "@/components/dashboard/data";
 import {
-  TimeframeFilterControl,
-  useAdminTimeframe,
-  isComplaintInTimeframe,
-} from "@/utils/timeframe-filter";
+  DateFilter,
+  useDateFilter,
+  isWithinDateRange,
+} from "@/components/dashboard/date-filter";
 import { printComplaintReport } from "@/utils/print-report";
 
 export type ProgresComplaint = {
@@ -112,14 +112,14 @@ function ProgresClientInner({
 
   // Combine global navbar search and local search
   const effectiveSearch = (localSearch || globalQuery).toLowerCase();
-  const { timeframe, setTimeframe } = useAdminTimeframe();
+  const { startDate, endDate } = useDateFilter();
 
-  // Complaints filtered by timeframe
-  const timeframeComplaints = initialComplaints.filter((c) =>
-    isComplaintInTimeframe(c.raw_date, timeframe)
+  // Complaints filtered by date period
+  const dateFilteredComplaints = initialComplaints.filter((c) =>
+    isWithinDateRange(c.raw_date, startDate, endDate)
   );
 
-  const filteredComplaints = timeframeComplaints.filter((c) => {
+  const filteredComplaints = dateFilteredComplaints.filter((c) => {
     const matchTab = activeTab === "SEMUA" || c.status === activeTab;
     const matchSearch =
       !effectiveSearch ||
@@ -133,11 +133,11 @@ function ProgresClientInner({
   });
 
   const countByStatus = {
-    SEMUA: timeframeComplaints.length,
-    DIAJUKAN: timeframeComplaints.filter((c) => c.status === "DIAJUKAN").length,
-    DIVERIFIKASI: timeframeComplaints.filter((c) => c.status === "DIVERIFIKASI").length,
-    DIPROSES: timeframeComplaints.filter((c) => c.status === "DIPROSES").length,
-    SELESAI: timeframeComplaints.filter((c) => c.status === "SELESAI").length,
+    SEMUA: dateFilteredComplaints.length,
+    DIAJUKAN: dateFilteredComplaints.filter((c) => c.status === "DIAJUKAN").length,
+    DIVERIFIKASI: dateFilteredComplaints.filter((c) => c.status === "DIVERIFIKASI").length,
+    DIPROSES: dateFilteredComplaints.filter((c) => c.status === "DIPROSES").length,
+    SELESAI: dateFilteredComplaints.filter((c) => c.status === "SELESAI").length,
   };
 
   const handleOpenAction = (complaint: ProgresComplaint) => {
@@ -394,7 +394,7 @@ function ProgresClientInner({
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <TimeframeFilterControl timeframe={timeframe} onChange={setTimeframe} />
+          <DateFilter />
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input
