@@ -8,6 +8,7 @@ import {
   FileText,
   ImageIcon,
   MapPin,
+  Printer,
   ShieldCheck,
   Tag,
   User,
@@ -18,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "./status-badge";
 import type { Complaint, EvidenceFile } from "./data";
+import { printComplaintReport } from "@/utils/print-report";
 
 function isImageEvidence(file: EvidenceFile): boolean {
   if (file.jenis_file?.startsWith("image/")) return true;
@@ -182,13 +184,26 @@ export function ComplaintDetailModal({
               {complaint.nomor_pengaduan}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
-          >
-            <X className="h-5 w-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => printComplaintReport(complaint)}
+              className="h-8 rounded-full border-slate-200 text-slate-700 hover:bg-slate-50 text-xs px-3 hidden sm:flex items-center gap-1.5 shadow-2xs"
+              title="Cetak Laporan / Simpan PDF"
+            >
+              <Printer className="h-3.5 w-3.5 text-slate-600" />
+              Cetak PDF
+            </Button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
         </div>
 
         {/* Scrollable Content */}
@@ -340,9 +355,20 @@ export function ComplaintDetailModal({
             <span className="text-xs text-slate-500">Status Saat Ini:</span>
             <StatusBadge status={complaint.status} />
           </div>
-          <Button type="button" variant="outline" onClick={onClose} className="rounded-full h-9 px-5">
-            Tutup
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              onClick={() => printComplaintReport(complaint)}
+              className="rounded-full bg-emerald-600 hover:bg-emerald-700 text-white h-9 px-4 text-xs font-semibold flex items-center gap-1.5 shadow-xs"
+              title="Cetak Laporan / Simpan PDF"
+            >
+              <Printer className="h-3.5 w-3.5" />
+              Cetak PDF
+            </Button>
+            <Button type="button" variant="outline" onClick={onClose} className="rounded-full h-9 px-5">
+              Tutup
+            </Button>
+          </div>
         </div>
       </div>
     </div>

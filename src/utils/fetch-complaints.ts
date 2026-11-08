@@ -184,6 +184,7 @@ export async function fetchEnrichedComplaints(
       : undefined;
 
     const status = (c.status as ComplaintStatus) || "DIAJUKAN";
+    const rawDate = c.tanggal_pengaduan || c.created_at || "";
 
     complaints.push({
       id: c.id,
@@ -193,6 +194,7 @@ export async function fetchEnrichedComplaints(
       description: c.detail_pengaduan,
       location: c.lokasi || "-",
       date: formattedDate,
+      raw_date: rawDate,
       status,
       employee: c.users?.nama || "Karyawan",
       department: c.users?.departemen || "Divisi",
@@ -215,6 +217,7 @@ export async function fetchEnrichedComplaints(
       detail_pengaduan: c.detail_pengaduan,
       status,
       tanggal_pengaduan: formattedDate,
+      raw_date: rawDate,
       kategori: categoryName || "Umum",
       nama_pelapor: c.users?.nama || "Karyawan",
       bukti_pengaduan: buktiPengaduanList,

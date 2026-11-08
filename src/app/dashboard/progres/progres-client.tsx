@@ -14,6 +14,7 @@ import {
   Loader2,
   MapPin,
   Paperclip,
+  Printer,
   RefreshCw,
   Search,
   ShieldCheck,
@@ -44,6 +45,12 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import type { ComplaintStatus, EvidenceFile } from "@/components/dashboard/data";
+import {
+  TimeframeFilterControl,
+  useAdminTimeframe,
+  isComplaintInTimeframe,
+} from "@/utils/timeframe-filter";
+import { printComplaintReport } from "@/utils/print-report";
 
 export type ProgresComplaint = {
   id: string;
@@ -53,6 +60,7 @@ export type ProgresComplaint = {
   detail_pengaduan: string;
   status: ComplaintStatus;
   tanggal_pengaduan: string;
+  raw_date?: string;
   kategori: string;
   nama_pelapor: string;
   bukti_pengaduan?: EvidenceFile[];
@@ -104,8 +112,14 @@ function ProgresClientInner({
 
   // Combine global navbar search and local search
   const effectiveSearch = (localSearch || globalQuery).toLowerCase();
+  const { timeframe, setTimeframe } = useAdminTimeframe();
 
-  const filteredComplaints = initialComplaints.filter((c) => {
+  // Complaints filtered by timeframe
+  const timeframeComplaints = initialComplaints.filter((c) =>
+    isComplaintInTimeframe(c.raw_date, timeframe)
+  );
+
+  const filteredComplaints = timeframeComplaints.filter((c) => {
     const matchTab = activeTab === "SEMUA" || c.status === activeTab;
     const matchSearch =
       !effectiveSearch ||
@@ -119,11 +133,11 @@ function ProgresClientInner({
   });
 
   const countByStatus = {
-    SEMUA: initialComplaints.length,
-    DIAJUKAN: initialComplaints.filter((c) => c.status === "DIAJUKAN").length,
-    DIVERIFIKASI: initialComplaints.filter((c) => c.status === "DIVERIFIKASI").length,
-    DIPROSES: initialComplaints.filter((c) => c.status === "DIPROSES").length,
-    SELESAI: initialComplaints.filter((c) => c.status === "SELESAI").length,
+    SEMUA: timeframeComplaints.length,
+    DIAJUKAN: timeframeComplaints.filter((c) => c.status === "DIAJUKAN").length,
+    DIVERIFIKASI: timeframeComplaints.filter((c) => c.status === "DIVERIFIKASI").length,
+    DIPROSES: timeframeComplaints.filter((c) => c.status === "DIPROSES").length,
+    SELESAI: timeframeComplaints.filter((c) => c.status === "SELESAI").length,
   };
 
   const handleOpenAction = (complaint: ProgresComplaint) => {
@@ -379,14 +393,17 @@ function ProgresClientInner({
           </p>
         </div>
 
-        <div className="relative w-full sm:w-72">
-          <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-          <Input
-            value={localSearch}
-            onChange={(e) => setLocalSearch(e.target.value)}
-            placeholder={globalQuery ? `Filter: ${globalQuery}` : "Cari tiket, judul, pelapor..."}
-            className="h-10 rounded-full border-slate-200 bg-white pl-10 text-sm focus-visible:ring-sidebar-brand"
-          />
+        <div className="flex flex-wrap items-center gap-3">
+          <TimeframeFilterControl timeframe={timeframe} onChange={setTimeframe} />
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Input
+              value={localSearch}
+              onChange={(e) => setLocalSearch(e.target.value)}
+              placeholder={globalQuery ? `Filter: ${globalQuery}` : "Cari tiket, judul, pelapor..."}
+              className="h-10 rounded-full border-slate-200 bg-white pl-10 text-sm focus-visible:ring-sidebar-brand"
+            />
+          </div>
         </div>
       </div>
 
@@ -598,14 +615,47 @@ function ProgresClientInner({
                 )}
 
                 {item.status === "SELESAI" && (
-                  <Button
-                    variant="outline"
-                    onClick={() => handleOpenAction(item)}
-                    className="w-full sm:w-auto rounded-full border-slate-200 text-slate-700 hover:bg-slate-50 text-xs px-4"
-                  >
-                    <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
-                    Detail Selesai
-                  </Button>
+                  <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                    <Button
+                      variant="outline"
+                      onClick={() => handleOpenAction(item)}
+                      className="w-full sm:w-auto rounded-full border-slate-200 text-slate-700 hover:bg-slate-50 text-xs px-3.5"
+                    >
+                      <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+                      Detail Selesai
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={() =>
+                        printComplaintReport({
+                          id: item.id,
+                          nomor_pengaduan: item.nomor_pengaduan,
+                          title: item.judul,
+                          category: item.kategori,
+                          description: item.detail_pengaduan,
+                          location: item.lokasi,
+                          date: item.tanggal_pengaduan,
+                          raw_date: item.raw_date,
+                          status: item.status,
+                          employee: item.nama_pelapor,
+                          bukti_pengaduan: item.bukti_pengaduan,
+                          bukti_penyelesaian: item.bukti_penyelesaian,
+                          hasil_verifikasi: item.hasil_verifikasi,
+                          catatan_verifikasi: item.catatan_verifikasi,
+                          jenis_penanganan: item.jenis_penanganan,
+                          estimasi_selesai: item.estimasi_selesai,
+                          catatan_penanganan: item.catatan_penanganan,
+                          catatan_selesai: item.catatan_selesai,
+                          tanggal_selesai: item.tanggal_selesai,
+                        })
+                      }
+                      className="w-full sm:w-auto rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3.5 shadow-2xs"
+                      title="Cetak Laporan / Simpan PDF"
+                    >
+                      <Printer className="h-3.5 w-3.5 mr-1.5" />
+                      Cetak PDF
+                    </Button>
+                  </div>
                 )}
               </div>
             </CardContent>
@@ -991,6 +1041,7 @@ function ProgresClientInner({
                 description: selectedComplaint.detail_pengaduan,
                 location: selectedComplaint.lokasi,
                 date: selectedComplaint.tanggal_pengaduan,
+                raw_date: selectedComplaint.raw_date,
                 status: selectedComplaint.status,
                 employee: selectedComplaint.nama_pelapor,
                 bukti_pengaduan: selectedComplaint.bukti_pengaduan,

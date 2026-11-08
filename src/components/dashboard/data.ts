@@ -16,6 +16,7 @@ export type Complaint = {
   description: string;
   location?: string;
   date: string;
+  raw_date?: string;
   status: ComplaintStatus;
   employee?: string;
   department?: string;

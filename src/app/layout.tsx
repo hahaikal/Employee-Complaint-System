@@ -13,8 +13,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sistem Pengaduan Karyawan",
-  description: "Sistem Informasi Pengaduan Karyawan",
+  title: "SIPKA — Sistem Informasi Pengaduan Karyawan",
+  description: "Sistem Informasi Pengaduan Karyawan General Affairs",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico" },
+    ],
+    apple: "/icon.png",
+  },
 };
 
 import { TooltipProvider } from "@/components/ui/tooltip";

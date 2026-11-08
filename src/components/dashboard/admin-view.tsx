@@ -15,6 +15,11 @@ import { cn } from "@/lib/utils";
 import type { Complaint, ComplaintStatus } from "./data";
 import { StatusBadge } from "./status-badge";
 import { ComplaintDetailModal } from "./complaint-detail-modal";
+import {
+  TimeframeFilterControl,
+  useAdminTimeframe,
+  isComplaintInTimeframe,
+} from "@/utils/timeframe-filter";
 
 const columns: {
   status: ComplaintStatus;
@@ -47,8 +52,11 @@ function AdminViewInner({
   const searchParams = useSearchParams();
   const globalSearch = (searchParams.get("q") || "").trim().toLowerCase();
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
+  const { timeframe, setTimeframe } = useAdminTimeframe();
 
   const filteredComplaints = complaints.filter((c) => {
+    const matchTime = isComplaintInTimeframe(c.raw_date, timeframe);
+    if (!matchTime) return false;
     if (!globalSearch) return true;
     return (
       c.title.toLowerCase().includes(globalSearch) ||
@@ -85,11 +93,15 @@ function AdminViewInner({
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h2 className="text-xl font-bold text-slate-900">Ringkasan Pengaduan</h2>
-        <p className="mt-1 text-sm text-slate-500">
-          Pantau dan tangani pengaduan fasilitas dari seluruh karyawan. Klik kartu pengaduan untuk melihat detail & lampiran bukti.
-        </p>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-xl font-bold text-slate-900">Ringkasan Pengaduan</h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Pantau dan tangani pengaduan fasilitas dari seluruh karyawan. Klik kartu pengaduan untuk melihat detail &amp; lampiran bukti.
+          </p>
+        </div>
+
+        <TimeframeFilterControl timeframe={timeframe} onChange={setTimeframe} />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
